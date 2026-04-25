@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block title %}Запись начисления · Отчет по начислению зарплаты{% endblock %}
+
+{% block content %}
+<section class="panel form-panel">
+    <h2>{% if object %}Редактирование начисления{% else %}Новое начисление{% endif %}</h2>
+    <p class="lead">Форма используется для заполнения данных, которые потом попадают в печатный отчет.</p>
+
+    <form method="post" class="data-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <label class="field-row">
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <small class="error-text">{{ error }}</small>
+                {% endfor %}
+            </label>
+        {% endfor %}
+        <div class="form-actions">
+            <button class="button" type="submit">Сохранить</button>
+            <a class="button secondary" href="{% url 'payroll:report' %}">К отчету</a>
+        </div>
+    </form>
+</section>
+{% endblock %}

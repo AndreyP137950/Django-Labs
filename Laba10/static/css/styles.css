@@ -1,0 +1,143 @@
+:root {
+    --bg: #f3f4f6;
+    --surface: #ffffff;
+    --line: #d1d5db;
+    --text: #1f2937;
+    --muted: #6b7280;
+    --accent: #334155;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    color: var(--text);
+    background: linear-gradient(180deg, #eef2f7 0%, #f8fafc 100%);
+}
+
+.container {
+    width: min(100% - 2rem, 980px);
+    margin: 0 auto;
+}
+
+.site-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    padding: 1rem 0;
+}
+
+.site-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.content {
+    padding: 1.25rem 0 2rem;
+    display: grid;
+    gap: 1rem;
+}
+
+.panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 1rem;
+}
+
+.panel h2 {
+    margin: 0 0 0.85rem;
+    font-size: 1.1rem;
+}
+
+.filter-form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(160px, 220px)) auto;
+    gap: 0.75rem;
+    align-items: end;
+}
+
+.field {
+    display: grid;
+    gap: 0.35rem;
+}
+
+label {
+    font-size: 0.92rem;
+    color: var(--muted);
+}
+
+input[type="date"] {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 0.5rem 0.55rem;
+    font: inherit;
+    color: var(--text);
+    background: #fff;
+}
+
+button {
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 0.55rem 0.9rem;
+    background: var(--accent);
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+
+button:hover {
+    filter: brightness(1.06);
+}
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 440px;
+}
+
+th,
+td {
+    text-align: left;
+    padding: 0.65rem;
+    border-bottom: 1px solid var(--line);
+}
+
+th {
+    font-weight: 600;
+    color: var(--muted);
+}
+
+tfoot td {
+    font-weight: 700;
+    border-top: 2px solid var(--line);
+    border-bottom: none;
+}
+
+.empty-row {
+    color: var(--muted);
+}
+
+.form-errors {
+    grid-column: 1 / -1;
+    color: #991b1b;
+    font-size: 0.9rem;
+}
+
+@media (max-width: 740px) {
+    .filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    button {
+        width: fit-content;
+    }
+}

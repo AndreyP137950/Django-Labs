@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Case Система - Проектирование Математических Моделей</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Заголовок -->
+        <header class="header">
+            <h1>Case Система Проектирования Программ</h1>
+            <p class="subtitle">Лабораторная работа №11 - Конструирование математических моделей</p>
+        </header>
+
+        <!-- Основной контент -->
+        <div class="main-content">
+            <!-- Левая колонка - конструктор -->
+            <section class="designer-section">
+                <h2>Визуальный конструктор функций</h2>
+                
+                <!-- Назначение системы -->
+                <div class="info-box">
+                    <p><strong>Цель:</strong> Графически составить цепочку: y = F1(F2(F3(x)))</p>
+                    <p><strong>Доступные функции:</strong></p>
+                    <ul>
+                        <li>sqrt(x) - корень квадратный (x >= 0)</li>
+                        <li>1/x - обратная функция (x ≠ 0)</li>
+                        <li>e^x - экспоненциальная функция</li>
+                    </ul>
+                </div>
+
+                <!-- Визуальная цепочка функций -->
+                <div class="function-chain">
+                    <!-- Вход -->
+                    <div class="chain-element input-element">
+                        <div class="element-label">Вход</div>
+                        <div class="element-name">x</div>
+                    </div>
+
+                    <!-- Стрелка -->
+                    <div class="chain-arrow">→</div>
+
+                    <!-- F3 - внутренняя функция -->
+                    <div class="chain-element function-element">
+                        <div class="element-label">Функция F3</div>
+                        <select id="function_f3" class="function-select">
+                            {% for value, label in function_types %}
+                                <option value="{{ value }}" {% if forvalues == chain.function_f3 %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Стрелка -->
+                    <div class="chain-arrow">→</div>
+
+                    <!-- F2 - средняя функция -->
+                    <div class="chain-element function-element">
+                        <div class="element-label">Функция F2</div>
+                        <select id="function_f2" class="function-select">
+                            {% for value, label in function_types %}
+                                <option value="{{ value }}" {% if value == chain.function_f2 %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Стрелка -->
+                    <div class="chain-arrow">→</div>
+
+                    <!-- F1 - внешняя функция -->
+                    <div class="chain-element function-element">
+                        <div class="element-label">Функция F1</div>
+                        <select id="function_f1" class="function-select">
+                            {% for value, label in function_types %}
+                                <option value="{{ value }}" {% if value == chain.function_f1 %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Стрелка -->
+                    <div class="chain-arrow">→</div>
+
+                    <!-- Выход -->
+                    <div class="chain-element output-element">
+                        <div class="element-label">Выход</div>
+                        <div class="element-name">y</div>
+                    </div>
+                </div>
+
+                <!-- Контрольное выражение - показывает формулу -->
+                <div class="formula-box">
+                    <p><strong>Сформированное выражение:</strong></p>
+                    <div class="formula" id="formula-display">
+                        y = F1(F2(F3(x)))
+                    </div>
+                </div>
+            </section>
+
+            <!-- Правая колонка - тестирование -->
+            <section class="test-section">
+                <h2>Тестирование и расчет</h2>
+
+                <!-- Ввод значения -->
+                <div class="input-group">
+                    <label for="x_input">Введите значение x:</label>
+                    <input 
+                        type="number" 
+                        id="x_input" 
+                        placeholder="Например: 2.5" 
+                        step="0.01" 
+                        value="2"
+                    >
+                </div>
+
+                <!-- Кнопка расчета -->
+                <button id="calculate_btn" class="btn btn-primary">Вычислить значение</button>
+
+                <!-- Результаты расчета -->
+                <div id="results" class="results-area" style="display: none;">
+                    <h3>Результаты вычисления:</h3>
+                    
+                    <!-- Сообщение об ошибке -->
+                    <div id="error_message" class="error-message" style="display: none;"></div>
+                    
+                    <!-- Успешный результат -->
+                    <div id="success_result" style="display: none;">
+                        <div class="result-value">
+                            <strong>Результат y =</strong> <span id="result_value">-</span>
+                        </div>
+
+                        <!-- Шаги вычисления -->
+                        <div class="calculation-steps">
+                            <strong>Шаги вычисления:</strong>
+                            <ol id="steps_list">
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Описание и примечания -->
+                <div class="notes-box">
+                    <h3>Примечания</h3>
+                    <ul>
+                        <li>Проверяются ограничения области определения функций</li>
+                        <li>Результаты округляются до 6 знаков после запятой</li>
+                        <li>При ошибке выводится описание проблемы</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <!-- Нижняя колонка - генерация кода -->
+        <section class="code-section">
+            <h2>Генерация программного кода</h2>
+
+            <div class="code-controls">
+                <!-- Кнопка генерирования кода -->
+                <button id="generate_vba_btn" class="btn btn-secondary">Показать VBA код</button>
+
+                <!-- Кнопка скачивания кода -->
+                <button id="download_vba_btn" class="btn btn-secondary">Скачать VBA файл</button>
+
+                <!-- Кнопка сохранения конфигурации -->
+                <button id="save_chain_btn" class="btn btn-secondary">Сохранить конфигурацию</button>
+            </div>
+
+            <!-- Область отображения кода -->
+            <div id="code_display" class="code-display" style="display: none;">
+                <h3>Сгенерированный VBA код:</h3>
+                <pre id="vba_code_content" class="code-block"></pre>
+                <button id="copy_code_btn" class="btn btn-small">Копировать код</button>
+            </div>
+
+            <!-- Информация о текущей конфигурации -->
+            <div class="config-info">
+                <p><strong>Текущая конфигурация сохранена с ID:</strong> <span id="chain_id">{{ chain.id }}</span></p>
+            </div>
+        </section>
+
+        <!-- Подвал -->
+        <footer class="footer">
+            <p>Лабораторная работа №11 - Case системы проектирования ПО</p>
+            <p>© 2026 - Интеллектуальные системы и CASE технологии</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript для интерактивности -->
+    <script>
+        // CSRF токен для POST запросов
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]')?.value || 
+                          document.cookie.split('; ').find(row => row.startsWith('csrftoken='))?.split('=')[1];
+
+        // Обновление формулы при изменении функций
+        function updateFormula() {
+            const f1 = document.getElementById('function_f1').value;
+            const f2 = document.getElementById('function_f2').value;
+            const f3 = document.getElementById('function_f3').value;
+            
+            const formulaDisplay = document.getElementById('formula-display');
+            formulaDisplay.textContent = `y = ${f1}(${f2}(${f3}(x)))`;
+        }
+
+        // Обработчики изменения функций
+        document.getElementById('function_f1').addEventListener('change', updateFormula);
+        document.getElementById('function_f2').addEventListener('change', updateFormula);
+        document.getElementById('function_f3').addEventListener('change', updateFormula);
+
+        // Кнопка вычисления
+        document.getElementById('calculate_btn').addEventListener('click', function() {
+            const xValue = parseFloat(document.getElementById('x_input').value);
+            const f1 = document.getElementById('function_f1').value;
+            const f2 = document.getElementById('function_f2').value;
+            const f3 = document.getElementById('function_f3').value;
+
+            // Формируем FormData для POST запроса
+            const formData = new FormData();
+            formData.append('x_value', xValue);
+            formData.append('f1', f1);
+            formData.append('f2', f2);
+            formData.append('f3', f3);
+
+            // Отправляем запрос на сервер
+            fetch('{% url "designer:calculate" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultsDiv = document.getElementById('results');
+                resultsDiv.style.display = 'block';
+
+                if (data.error) {
+                    // Показываем ошибку
+                    document.getElementById('error_message').innerText = data.error;
+                    document.getElementById('error_message').style.display = 'block';
+                    document.getElementById('success_result').style.display = 'none';
+                } else {
+                    // Показываем результат
+                    document.getElementById('error_message').style.display = 'none';
+                    document.getElementById('success_result').style.display = 'block';
+                    
+                    // Форматируем результат
+                    const resultValue = parseFloat(data.result).toFixed(6);
+                    document.getElementById('result_value').innerText = resultValue;
+
+                    // Отображаем шаги
+                    const stepsList = document.getElementById('steps_list');
+                    stepsList.innerHTML = '';
+                    data.steps.forEach(step => {
+                        const li = document.createElement('li');
+                        li.innerText = step;
+                        stepsList.appendChild(li);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Ошибка при обращении к серверу');
+            });
+        });
+
+        // Кнопка генерирования VBA кода
+        document.getElementById('generate_vba_btn').addEventListener('click', function() {
+            const f1 = document.getElementById('function_f1').value;
+            const f2 = document.getElementById('function_f2').value;
+            const f3 = document.getElementById('function_f3').value;
+
+            const formData = new FormData();
+            formData.append('f1', f1);
+            formData.append('f2', f2);
+            formData.append('f3', f3);
+
+            fetch('{% url "designer:generate_vba" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('vba_code_content').innerText = data.vba_code;
+                    document.getElementById('code_display').style.display = 'block';
+                } else {
+                    alert('Ошибка: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Ошибка при генерировании кода');
+            });
+        });
+
+        // Кнопка скачивания VBA файла
+        document.getElementById('download_vba_btn').addEventListener('click', function() {
+            const f1 = document.getElementById('function_f1').value;
+            const f2 = document.getElementById('function_f2').value;
+            const f3 = document.getElementById('function_f3').value;
+
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{% url "designer:download_vba" %}';
+
+            const f1Input = document.createElement('input');
+            f1Input.type = 'hidden';
+            f1Input.name = 'f1';
+            f1Input.value = f1;
+            form.appendChild(f1Input);
+
+            const f2Input = document.createElement('input');
+            f2Input.type = 'hidden';
+            f2Input.name = 'f2';
+            f2Input.value = f2;
+            form.appendChild(f2Input);
+
+            const f3Input = document.createElement('input');
+            f3Input.type = 'hidden';
+            f3Input.name = 'f3';
+            f3Input.value = f3;
+            form.appendChild(f3Input);
+
+            const csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = csrftoken;
+            form.appendChild(csrfInput);
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
+        });
+
+        // Кнопка сохранения конфигурации
+        document.getElementById('save_chain_btn').addEventListener('click', function() {
+            const f1 = document.getElementById('function_f1').value;
+            const f2 = document.getElementById('function_f2').value;
+            const f3 = document.getElementById('function_f3').value;
+            const description = prompt('Введите описание конфигурации (опционально):') || '';
+
+            const formData = new FormData();
+            formData.append('f1', f1);
+            formData.append('f2', f2);
+            formData.append('f3', f3);
+            formData.append('description', description);
+
+            fetch('{% url "designer:save_chain" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('chain_id').innerText = data.chain_id;
+                    alert(data.message);
+                } else {
+                    alert('Ошибка: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Ошибка при сохранении');
+            });
+        });
+
+        // Кнопка копирования кода
+        document.getElementById('copy_code_btn').addEventListener('click', function() {
+            const codeContent = document.getElementById('vba_code_content').innerText;
+            navigator.clipboard.writeText(codeContent).then(() => {
+                alert('Код скопирован в буфер обмена');
+            }).catch(err => {
+                alert('Ошибка при копировании');
+            });
+        });
+
+        // Обработка Enter в поле ввода
+        document.getElementById('x_input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('calculate_btn').click();
+            }
+        });
+    </script>
+</body>
+</html>

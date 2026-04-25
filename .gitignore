@@ -1,0 +1,32 @@
+# Виртуальное окружение (самое важное)
+venv/
+env/
+.venv/
+bin/
+lib/
+include/
+
+# Python (байт-код и кэш)
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Django (база данных и статика)
+db.sqlite3
+/static/
+/media/
+staticfiles/
+
+# Переменные окружения и секреты
+.env
+local_settings.py
+
+# Настройки редакторов (VS Code, PyCharm)
+.vscode/
+.idea/
+*.swp
+*.bak
+
+# Логи
+*.log

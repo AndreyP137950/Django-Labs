@@ -1,0 +1,77 @@
+{% extends 'transport/base.html' %}
+
+{% block title %}Новый путевой лист{% endblock %}
+
+{% block content %}
+<h2>Новый путевой лист</h2>
+<form method="post" class="data-form">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div class="form-row">
+        <label for="id_driver">Водитель</label>
+        {{ form.driver }}
+        {{ form.driver.errors }}
+    </div>
+
+    <div class="form-row">
+        <label for="id_car">Автомобиль</label>
+        {{ form.car }}
+        {{ form.car.errors }}
+    </div>
+
+    <div class="form-row">
+        <label for="id_departure_time">Время выезда</label>
+        {{ form.departure_time }}
+        {{ form.departure_time.errors }}
+    </div>
+
+    <div class="form-row">
+        <label for="id_arrival_time">Время заезда</label>
+        {{ form.arrival_time }}
+        {{ form.arrival_time.errors }}
+    </div>
+
+    <div class="form-row">
+        <label for="id_start_km">Начальный километраж</label>
+        {{ form.start_km }}
+        {{ form.start_km.errors }}
+    </div>
+
+    <div class="form-row">
+        <label for="id_end_km">Конечный километраж</label>
+        {{ form.end_km }}
+        {{ form.end_km.errors }}
+    </div>
+
+    <button type="submit">Сохранить</button>
+</form>
+
+<script>
+    // При выборе водителя обновляем список закрепленных за ним автомобилей.
+    const driverSelect = document.getElementById('id_driver');
+    const carSelect = document.getElementById('id_car');
+
+    function updateCars() {
+        const driverId = driverSelect.value;
+        carSelect.innerHTML = '<option value="">---------</option>';
+
+        if (!driverId) {
+            return;
+        }
+
+        fetch(`/api/drivers/${driverId}/cars/`)
+            .then((response) => response.json())
+            .then((data) => {
+                data.cars.forEach((car) => {
+                    const option = document.createElement('option');
+                    option.value = car.id;
+                    option.textContent = car.title;
+                    carSelect.appendChild(option);
+                });
+            });
+    }
+
+    driverSelect.addEventListener('change', updateCars);
+</script>
+{% endblock %}

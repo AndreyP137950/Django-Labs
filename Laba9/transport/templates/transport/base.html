@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Учет автотранспорта{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'transport/css/styles.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="container">
+            <h1>Учет пробега автотранспорта</h1>
+            <nav class="main-nav">
+                <a href="{% url 'transport:home' %}">Главная</a>
+                <a href="{% url 'transport:drivers_list' %}">Водители</a>
+                <a href="{% url 'transport:cars_list' %}">Автомобили</a>
+                <a href="{% url 'transport:trip_sheets_list' %}">Путевые листы</a>
+                <a href="{% url 'transport:trip_sheet_create' %}">Новый путевой лист</a>
+                <a href="{% url 'transport:charts' %}">Диаграммы</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

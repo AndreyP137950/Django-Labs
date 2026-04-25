@@ -1,0 +1,51 @@
+# Git ignore файл для проекта Django Case системы
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Django
+*.log
+local_settings.py
+/media
+/staticfiles
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Тестирование
+.coverage
+.pytest_cache/
+htmlcov/
+
+# Окружение
+.env
+.env.local
+.venv

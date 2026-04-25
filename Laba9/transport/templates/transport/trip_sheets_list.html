@@ -1,0 +1,39 @@
+{% extends 'transport/base.html' %}
+
+{% block title %}Путевые листы{% endblock %}
+
+{% block content %}
+<h2>Документы «Путевой лист»</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Водитель</th>
+            <th>Автомобиль</th>
+            <th>Время выезда</th>
+            <th>Время заезда</th>
+            <th>Начальный километраж</th>
+            <th>Конечный километраж</th>
+            <th>Пробег</th>
+            <th>Расход топлива</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sheet in trip_sheets %}
+        <tr>
+            <td>{{ sheet.driver.employee.full_name }}</td>
+            <td>{{ sheet.car }}</td>
+            <td>{{ sheet.departure_time|date:'d.m.Y H:i' }}</td>
+            <td>{{ sheet.arrival_time|date:'d.m.Y H:i' }}</td>
+            <td>{{ sheet.start_km }}</td>
+            <td>{{ sheet.end_km }}</td>
+            <td>{{ sheet.mileage }}</td>
+            <td>{{ sheet.fuel_consumption }}</td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8">Пока нет документов.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

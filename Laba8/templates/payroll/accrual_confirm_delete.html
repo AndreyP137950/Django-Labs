@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление начисления · Отчет по начислению зарплаты{% endblock %}
+
+{% block content %}
+<section class="panel form-panel">
+    <h2>Удаление начисления</h2>
+    <p>Удалить запись для сотрудника <strong>{{ object.employee }}</strong>?</p>
+    <form method="post" class="form-actions">
+        {% csrf_token %}
+        <button class="button danger" type="submit">Удалить</button>
+        <a class="button secondary" href="{% url 'payroll:accrual_detail' object.pk %}">Отмена</a>
+    </form>
+</section>
+{% endblock %}

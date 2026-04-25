@@ -1,0 +1,17 @@
+# Зависимости для приложения Laba7
+# Django и дополнительные пакеты
+
+# Фреймворк Django - основа вебприложения
+Django==4.2.0
+
+# psycopg2-binary - для работы с PostgreSQL БД (опционально)
+# psycopg2-binary==2.9.6
+
+# python-decouple - для управления переменными окружения
+python-decouple==3.8
+
+# pillow - для обработки изображений
+Pillow==10.0.0
+
+# requests - для HTTP запросов
+requests==2.31.0

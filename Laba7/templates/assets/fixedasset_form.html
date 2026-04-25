@@ -1,0 +1,167 @@
+<!-- Форма для создания/редактирования основного средства -->
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Редактирование основного средства
+    {% else %}
+        Создание нового основного средства
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>
+    {% if form.instance.pk %}
+        Редактирование: {{ form.instance.name }}
+    {% else %}
+        Создание нового основного средства
+    {% endif %}
+</h2>
+
+<form method="post" id="assetForm">
+    <!-- CSRF токен для защиты от CSRF атак -->
+    {% csrf_token %}
+    
+    <!-- Вывод поля "Наименование" -->
+    <div class="form-group">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+        {% if form.name.errors %}
+            <div style="color: #e74c3c; margin-top: 0.5rem;">
+                {{ form.name.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Вывод поля "Описание" -->
+    <div class="form-group">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+        {% if form.description.errors %}
+            <div style="color: #e74c3c; margin-top: 0.5rem;">
+                {{ form.description.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Вывод поля "Подразделение" -->
+    <div class="form-group">
+        {{ form.department.label_tag }}
+        {{ form.department }}
+        {% if form.department.errors %}
+            <div style="color: #e74c3c; margin-top: 0.5rem;">
+                {{ form.department.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- === ОСНОВНОЕ ПОЛЕ: КОД ВНУТРЕННЕГО УЧЕТА === -->
+    <div class="card" style="background-color: #f0f7ff; border-left: 4px solid #3498db;">
+        <h3>Код внутреннего учета</h3>
+        
+        <p><strong>Текущий коэффициент:</strong> 
+        {% if form.instance.pk %}
+            <span style="color: #27ae60; font-size: 1.1rem;">{{ form.instance.internal_code }}</span>
+        {% else %}
+            <span style="color: #999;">Будет назначен автоматически</span>
+        {% endif %}
+        </p>
+        
+        <p style="font-size: 0.9rem; color: #666;">
+            <strong>Правило:</strong> КодПодразделения + Порядковый номер ОС в подразделении<br>
+            <strong>Пример:</strong> ОФ_1, ОФ_2, ЦЕХ1_1, ЦЕХ1_2
+        </p>
+        
+        <!-- Кнопка "Назначить внутренний код" (основная функция) -->
+        <button type="button" class="button success" onclick="assignInternalCode()" id="assignCodeBtn">
+            {% if form.instance.pk %}
+                Переназначить код внутреннего учета
+            {% else %}
+                Назначить внутренний код
+            {% endif %}
+        </button>
+        
+        <div id="codeMessage" style="margin-top: 0.5rem; display: none;"></div>
+    </div>
+    
+    <!-- Вывод поля "Дата покупки" -->
+    <div class="form-group">
+        {{ form.purchase_date.label_tag }}
+        {{ form.purchase_date }}
+        {% if form.purchase_date.errors %}
+            <div style="color: #e74c3c; margin-top: 0.5rem;">
+                {{ form.purchase_date.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Вывод поля "Стоимость" -->
+    <div class="form-group">
+        {{ form.cost.label_tag }}
+        {{ form.cost }}
+        {% if form.cost.errors %}
+            <div style="color: #e74c3c; margin-top: 0.5rem;">
+                {{ form.cost.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Вывод поля "Процент износа" -->
+    <div class="form-group">
+        {{ form.depreciation_percent.label_tag }}
+        {{ form.depreciation_percent }}
+        {% if form.depreciation_percent.errors %}
+            <div style="color: #e74c3c; margin-top: 0.5rem;">
+                {{ form.depreciation_percent.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Общие ошибки формы -->
+    {% if form.non_field_errors %}
+        <div class="message error">
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+    
+    <!-- Кнопки действия -->
+    <div>
+        <button type="submit" class="button success">
+            {% if form.instance.pk %}
+                Сохранить изменения
+            {% else %}
+                Создать основное средство
+            {% endif %}
+        </button>
+        <a href="{% url 'fixedasset_list' %}" class="button">Отмена</a>
+    </div>
+</form>
+
+<!-- JavaScript код для функции назначения кода внутреннего учета -->
+<script>
+    // Функция для назначения/переназначения кода внутреннего учета
+    function assignInternalCode() {
+        // Получаем подразделение из формы
+        const departmentSelect = document.querySelector('[name="department"]');
+        const departmentId = departmentSelect.value;
+        
+        // Проверяем, что выбрано подразделение
+        if (!departmentId) {
+            alert('Пожалуйста, выберите подразделение');
+            return;
+        }
+        
+        // Установиться флаг что пользователь нажал кнопку
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'assign_code';
+        hiddenInput.value = 'true';
+        document.getElementById('assetForm').appendChild(hiddenInput);
+        
+        // Отправляем форму
+        document.getElementById('assetForm').submit();
+    }
+</script>
+
+{% endblock %}
+

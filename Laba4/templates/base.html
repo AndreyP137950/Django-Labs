@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Управление персоналом{% endblock %}</title>
+    
+    <!-- Подключаем современные шрифты Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Подключаем наш скрипт стилей -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'employees/style.css' %}">
+</head>
+<body>
+    <!-- Верхняя панель навигации -->
+    <nav class="navbar">
+        <a href="{% url 'employee_list' %}" class="navbar-brand">Корпоративный Портал</a>
+        <div class="navbar-user">
+            {% if user.is_authenticated %}
+                <!-- Если пользователь вошел, показываем его имя и кнопку Выход -->
+                <span class="muted-text">Вы вошли как <strong style="color: var(--text-primary);">{{ user.get_full_name|default:user.username }}</strong></span>
+                <form action="{% url 'logout' %}" method="post" style="display:inline;">
+                    <!-- CSRF токен обязателен для безопасности POST запросов -->
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline">Выйти</button>
+                </form>
+            {% else %}
+                <!-- Для Гостя (неавторизованного) показываем кнопку Вход -->
+                <span class="muted-text">Статус: Гость</span>
+                <a href="{% url 'login' %}" class="btn btn-primary">Войти</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <!-- Основной контейнер для содержимого страницы -->
+    <main class="container">
+        {% block content %}
+        {% endblock content %}
+    </main>
+</body>
+</html>

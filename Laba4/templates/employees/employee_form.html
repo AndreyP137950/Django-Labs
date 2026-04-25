@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if object %}Редактирование: {{ object.last_name }} {{ object.first_name }}{% else %}Добавление сотрудника{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <h2 class="page-title" style="margin-bottom: 2rem;">
+        {% if object %}Редактировать сотрудника{% else %}Новый сотрудник{% endif %}
+    </h2>
+
+    <form method="post">
+        {% csrf_token %}
+        
+        <!-- Мы можем просто вывести {{ form.as_p }}, но для лучшего внешнего вида 
+             выводим поля с нашими классами вручную -->
+             
+        {% for field in form %}
+            <div class="form-group">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }} <!-- Здесь подставится HTML виджета (поле ввода), который мы задали в forms.py -->
+                
+                {% if field.errors %}
+                    <div style="color: var(--danger-color); font-size: 0.8rem; margin-top: 0.25rem;">
+                        {{ field.errors|striptags }}
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <div class="form-actions">
+            <a href="{% url 'employee_list' %}" class="btn btn-outline" style="margin-right: auto;">Отмена</a>
+            <button type="submit" class="btn btn-primary">
+                {% if object %}Сохранить изменения{% else %}Добавить{% endif %}
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

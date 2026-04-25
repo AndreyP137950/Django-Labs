@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Лабораторная работа №3</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'exchange_app/style.css' %}">
+</head>
+
+<body>
+    <h1>Обмен данными: Источник -> Сервер -> Визуализатор</h1>
+
+    <div id="global-status" class="status-message"
+        style="text-align: center; margin-bottom: 20px; font-size: 1.1rem; border-width: 2px;"></div>
+
+    <div class="container">
+        <!-- БЛОК 1: ИСТОЧНИК -->
+        <div class="block" id="source-block">
+            <h2>Источник данных</h2>
+            <p>1. Структура данных</p>
+            <table id="structure-table">
+                <thead>
+                    <tr>
+                        <th>Код</th>
+                        <th>Наименование</th>
+                        <th>Передавать</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>date</td>
+                        <td>Дата</td>
+                        <td><input type="checkbox" checked disabled></td>
+                    </tr>
+                    <tr>
+                        <td>rate</td>
+                        <td>Курс</td>
+                        <td><input type="checkbox" checked disabled></td>
+                    </tr>
+                    <tr>
+                        <td>exchange</td>
+                        <td>Биржа</td>
+                        <td><input type="checkbox" checked></td>
+                    </tr>
+                    <tr>
+                        <td>source</td>
+                        <td>Источник информации</td>
+                        <td><input type="checkbox"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>2. Ввод данных</p>
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Дата</th>
+                        <th style="width: 30%;">Курс</th>
+                        <th style="width: 15%;">Биржа</th>
+                        <th style="width: 15%;">Источник</th>
+                        <th style="width: 10%;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Строки будут добавляться динамически -->
+                </tbody>
+            </table>
+            <button onclick="addRow()">Добавить строку</button>
+            <button onclick="saveSourceData()">Выгрузить во внешний файл</button>
+        </div>
+
+        <!-- БЛОК 2: СЕРВЕР -->
+        <div class="block" id="server-block">
+            <h2>Сервер обработки</h2>
+            <p>Обработка: Усреднение значений курса на каждую дату.</p>
+            <button onclick="processServerData()">Загрузить и обработать</button>
+
+            <table id="server-data-table" style="display: none; margin-top: 20px;">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Средний курс</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- БЛОК 3: ВИЗУАЛИЗАТОР -->
+        <div class="block" id="visualizer-block">
+            <h2>Визуализатор</h2>
+            <p>Программа: Microsoft Excel (OLE/COM)</p>
+            <button onclick="sendToVisualizer()" id="btn-visualize" disabled>Отправить в Excel</button>
+        </div>
+    </div>
+
+    <!-- CSRF Token для POST запросов -->
+    {% csrf_token %}
+
+    <script>
+        // Добавление строки по умолчанию при загрузке
+        window.onload = function () {
+            addRow();
+            addRow();
+        };
+
+        function addRow() {
+            const todayObj = new Date();
+            const dd = String(todayObj.getDate()).padStart(2, '0');
+            const mm = String(todayObj.getMonth() + 1).padStart(2, '0');
+            const yyyy = todayObj.getFullYear();
+            const today = `${dd}.${mm}.${yyyy}`;
+            const tbody = document.querySelector("#data-table tbody");
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td><input type="text" class="d-date" value="${today}" placeholder="ДД.ММ.ГГГГ"></td>
+                <td><input type="number" step="0.01" class="d-rate" value="75.00"></td>
+                <td>
+                    <select class="d-exchange">
+                        <option value="MOEX">MOEX</option>
+                        <option value="SPBEX">SPBEX</option>
+                        <option value="Binance">Binance</option>
+                        <option value="NYSE">NYSE</option>
+                        <option value="NASDAQ">NASDAQ</option>
+                    </select>
+                </td>
+                <td><input type="text" class="d-source" value="CBR"></td>
+                <td><button onclick="this.closest('tr').remove()" style="margin:0; padding:4px;">X</button></td>
+            `;
+            tbody.appendChild(tr);
+        }
+
+        // Получение CSRF токена из DOM
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        // БЛОК 1: Выгрузка данных
+        async function saveSourceData() {
+            // Формируем структуру
+            const checkboxes = document.querySelectorAll("#structure-table input[type='checkbox']");
+            const structure = [
+                { code: 'date', transmit: checkboxes[0].checked },
+                { code: 'rate', transmit: checkboxes[1].checked },
+                { code: 'exchange', transmit: checkboxes[2].checked },
+                { code: 'source', transmit: checkboxes[3].checked }
+            ];
+
+            // Формируем данные
+            const dataRows = document.querySelectorAll("#data-table tbody tr");
+            const data = [];
+            dataRows.forEach(row => {
+                const date = row.querySelector('.d-date').value;
+                const rate = row.querySelector('.d-rate').value;
+                const exchange = row.querySelector('.d-exchange').value;
+                const source = row.querySelector('.d-source').value;
+                if (date && rate) {
+                    data.push({ date, rate, exchange, source });
+                }
+            });
+
+            try {
+                const response = await fetch('/api/source/save/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({ structure, data })
+                });
+                const result = await response.json();
+                const statusDiv = document.getElementById('global-status');
+
+                if (response.ok) {
+                    statusDiv.className = 'status-message status-success';
+                    statusDiv.textContent = result.message;
+                } else {
+                    statusDiv.className = 'status-message status-error';
+                    statusDiv.textContent = result.message;
+                }
+                statusDiv.style.display = 'block';
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // Глобальная переменная хранения обработанных данных
+        let globalProcessedData = null;
+
+        // БЛОК 2: Загрузка и обработка
+        async function processServerData() {
+            try {
+                const response = await fetch('/api/server/process/');
+                const result = await response.json();
+                const statusDiv = document.getElementById('global-status');
+
+                if (response.ok) {
+                    statusDiv.className = 'status-message status-success';
+                    statusDiv.textContent = 'Данные успешно загружены и обработаны.';
+                    statusDiv.style.display = 'block';
+
+                    // Показываем таблицу
+                    const tbody = document.querySelector("#server-data-table tbody");
+                    tbody.innerHTML = '';
+
+                    globalProcessedData = result.processed_data;
+
+                    globalProcessedData.forEach(row => {
+                        const tr = document.createElement("tr");
+                        tr.innerHTML = `<td>${row.date}</td><td>${row.avg_rate}</td>`;
+                        tbody.appendChild(tr);
+                    });
+                    document.getElementById('server-data-table').style.display = 'table';
+
+                    // Активируем кнопку визуализации
+                    document.getElementById('btn-visualize').disabled = false;
+                } else {
+                    statusDiv.className = 'status-message status-error';
+                    statusDiv.textContent = result.message;
+                    statusDiv.style.display = 'block';
+                }
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // БЛОК 3: Визуализация (Excel)
+        async function sendToVisualizer() {
+            if (!globalProcessedData) return;
+
+            const btn = document.getElementById('btn-visualize');
+            btn.disabled = true;
+            btn.textContent = 'Отправка...';
+
+            try {
+                const response = await fetch('/api/visualizer/display/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({ processed_data: globalProcessedData })
+                });
+                const result = await response.json();
+                const statusDiv = document.getElementById('global-status');
+
+                if (response.ok) {
+                    statusDiv.className = 'status-message status-success';
+                    statusDiv.innerHTML = result.message;
+                } else {
+                    statusDiv.className = 'status-message status-error';
+                    statusDiv.innerHTML = result.message + (result.details ? `<br><small>${result.details}</small>` : '');
+                }
+                statusDiv.style.display = 'block';
+            } catch (e) {
+                console.error(e);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Отправить в Excel';
+            }
+        }
+    </script>
+</body>
+
+</html>

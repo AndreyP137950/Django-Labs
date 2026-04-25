@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Список сотрудников фирмы</h1>
+    
+    <!-- Кнопка добавления показывается только если у пользователя есть право 'add_employee' -->
+    {% if perms.employees.add_employee %}
+        <a href="{% url 'employee_add' %}" class="btn btn-primary">+ Добавить сотрудника</a>
+    {% endif %}
+</div>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Отчество</th>
+                <th>Должность</th>
+                <th>Рабочий телефон</th>
+                
+                <!-- Гости (неавторизованные пользователи) не видят эти заголовки -->
+                {% if not is_guest %}
+                    <th>Адрес</th>
+                    <th>Личный телефон</th>
+                {% endif %}
+                
+                <!-- Столбец действий показываем, если у пользователя есть права на изменение или удаление -->
+                {% if perms.employees.change_employee or perms.employees.delete_employee %}
+                    <th>Действия</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for employee in employees %}
+                <tr>
+                    <td>{{ employee.last_name }}</td>
+                    <td>{{ employee.first_name }}</td>
+                    <td>{{ employee.patronymic }}</td>
+                    <td>{{ employee.position }}</td>
+                    <td>{{ employee.work_phone }}</td>
+                    
+                    <!-- Гости (неавторизованные пользователи) не видят эти данные -->
+                    {% if not is_guest %}
+                        <td>{{ employee.address }}</td>
+                        <td>{{ employee.personal_phone }}</td>
+                    {% endif %}
+                    
+                    <!-- Кнопки действий -->
+                    {% if perms.employees.change_employee or perms.employees.delete_employee %}
+                        <td>
+                            <div class="table-actions">
+                                {% if perms.employees.change_employee %}
+                                    <a href="{% url 'employee_edit' employee.id %}" class="action-link">Изменить</a>
+                                {% endif %}
+                                {% if perms.employees.delete_employee %}
+                                    <!-- Горизонтальная черта для разделения, если есть обе кнопки -->
+                                    {% if perms.employees.change_employee %}|{% endif %}
+                                    <a href="{% url 'employee_delete' employee.id %}" class="action-link danger">Удалить</a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% empty %}
+                <!-- Если список пуст -->
+                <tr>
+                    <td colspan="10" style="text-align: center; color: var(--text-secondary); padding: 3rem;">
+                        Сотрудники не найдены.
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

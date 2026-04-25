@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Отчет по начислению зарплаты{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <!-- Общая оболочка проекта: шапка, навигация и сообщения. -->
+    <header class="site-header">
+        <div class="container header-grid">
+            <div>
+                <h1>Печатная форма отчета по начислению зарплаты</h1>
+            </div>
+            <nav class="top-nav" aria-label="Основная навигация">
+                <a href="{% url 'payroll:home' %}">Главная</a>
+                <a href="{% url 'payroll:report' %}">Отчет</a>
+                <a href="{% url 'payroll:accrual_add' %}">Добавить запись</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-area">
+        {% if messages %}
+            <section class="messages" aria-live="polite">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

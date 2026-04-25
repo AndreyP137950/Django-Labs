@@ -1,0 +1,31 @@
+{% extends 'transport/base.html' %}
+
+{% block title %}Водители{% endblock %}
+
+{% block content %}
+<h2>Справочник водителей</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Сотрудник</th>
+            <th>Автомобили</th>
+            <th>Суммарный пробег</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for driver in drivers %}
+        <tr>
+            <td>{{ driver.employee.full_name }}</td>
+            <td>
+                {% for car in driver.cars.all %}
+                    {{ car }}{% if not forloop.last %}, {% endif %}
+                {% empty %}
+                    -
+                {% endfor %}
+            </td>
+            <td>{{ driver.total_mileage }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

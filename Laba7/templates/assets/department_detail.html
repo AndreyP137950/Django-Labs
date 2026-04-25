@@ -1,0 +1,61 @@
+<!-- Детальная информация о подразделении -->
+{% extends 'base.html' %}
+
+{% block title %}{{ department.name }} - Подразделения{% endblock %}
+
+{% block content %}
+<h2>{{ department.name }}</h2>
+
+<div class="card">
+    <p><strong>Код подразделения:</strong> {{ department.code }}</p>
+    <p><strong>Описание:</strong> {{ department.description | default:"Нет описания" }}</p>
+    <p><strong>Дата создания:</strong> {{ department.created_at | date:"d.m.Y H:i" }}</p>
+    
+    <div>
+        <a href="{% url 'department_update' department.id %}" class="button">Редактировать</a>
+        <a href="{% url 'department_list' %}" class="button">Вернуться к списку</a>
+    </div>
+</div>
+
+<!-- Основные средства в подразделении -->
+<h3>Основные средства в подразделении</h3>
+
+{% if assets %}
+    <p><strong>Всего основных средств:</strong> {{ assets_count }}</p>
+    <p><strong>Общая стоимость:</strong> {{ assets_total_cost | floatformat:2 }} руб.</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Код внутреннего учета</th>
+                <th>Наименование</th>
+                <th>Стоимость</th>
+                <th>Износ</th>
+                <th>Дата покупки</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for asset in assets %}
+                <tr>
+                    <td><strong>{{ asset.internal_code }}</strong></td>
+                    <td>{{ asset.name }}</td>
+                    <td>{{ asset.cost | floatformat:2 }} руб.</td>
+                    <td>{{ asset.depreciation_percent }}%</td>
+                    <td>{{ asset.purchase_date | date:"d.m.Y" }}</td>
+                    <td class="action-buttons">
+                        <a href="{% url 'fixedasset_detail' asset.id %}" class="button">Просмотр</a>
+                        <a href="{% url 'fixedasset_update' asset.id %}" class="button">Редактировать</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="card">
+        <p>В этом подразделении еще нет основных средств.</p>
+    </div>
+{% endif %}
+
+{% endblock %}
+

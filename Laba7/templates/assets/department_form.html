@@ -1,0 +1,73 @@
+<!-- Форма для создания/редактирования подразделения -->
+{% extends 'base.html' %}
+
+{% block title %}
+    {% if form.instance.pk %}
+        Редактирование подразделения
+    {% else %}
+        Создание нового подразделения
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<h2>
+    {% if form.instance.pk %}
+        Редактирование подразделения: {{ form.instance.name }}
+    {% else %}
+        Создание нового подразделения
+    {% endif %}
+</h2>
+
+<form method="post">
+    <!-- CSRF токен для защиты от CSRF атак -->
+    {% csrf_token %}
+    
+    <!-- Вывод поля "Код подразделения" -->
+    <div class="form-group">
+        {{ form.code.label_tag }}
+        {{ form.code }}
+        <!-- Вывод ошибок валидации если есть -->
+        {% if form.code.errors %}
+            <div style="color: #e74c3c; margin-top: 0.5rem;">
+                {{ form.code.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Вывод поля "Наименование" -->
+    <div class="form-group">
+        {{ form.name.label_tag }}
+        {{ form.name }}
+        {% if form.name.errors %}
+            <div style="color: #e74c3c; margin-top: 0.5rem;">
+                {{ form.name.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Вывод поля "Описание" -->
+    <div class="form-group">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+        {% if form.description.errors %}
+            <div style="color: #e74c3c; margin-top: 0.5rem;">
+                {{ form.description.errors }}
+            </div>
+        {% endif %}
+    </div>
+    
+    <!-- Кнопки действия -->
+    <div>
+        <button type="submit" class="button success">
+            {% if form.instance.pk %}
+                Сохранить изменения
+            {% else %}
+                Создать подразделение
+            {% endif %}
+        </button>
+        <a href="{% url 'department_list' %}" class="button">Отмена</a>
+    </div>
+</form>
+
+{% endblock %}
+

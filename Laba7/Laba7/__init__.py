@@ -1,0 +1,1 @@
+# Django проект Laba7

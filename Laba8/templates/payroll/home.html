@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная · Отчет по начислению зарплаты{% endblock %}
+
+{% block content %}
+<section class="panel intro-panel">
+    <div>
+        <h2>Описание работы</h2>
+        <p class="lead">Вместо справочника из 1С здесь используется таблица Django. Она хранит начисления сотрудников и формирует печатную форму отчета по всем записям.</p>
+    </div>
+    <div class="card-actions">
+        <a class="button" href="{% url 'payroll:report' %}">Открыть отчет</a>
+        <a class="button secondary" href="{% url 'payroll:accrual_add' %}">Добавить начисление</a>
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Краткая статистика</h2>
+    <div class="stats-grid">
+        <article class="stat-card">
+            <span class="stat-label">Записей</span>
+            <strong class="stat-value">{{ accrual_count }}</strong>
+        </article>
+        <article class="stat-card">
+            <span class="stat-label">Сумма начислений</span>
+            <strong class="stat-value">{{ total_amount|floatformat:2 }}</strong>
+        </article>
+    </div>
+</section>
+
+<section class="panel">
+    <h2>Последние записи</h2>
+    {% if recent_accruals %}
+        <div class="table-wrap">
+            <table class="report-table compact">
+                <thead>
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th>Начислено</th>
+                        <th>Комментарий</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for accrual in recent_accruals %}
+                        <tr>
+                            <td>{{ accrual.employee }}</td>
+                            <td>{{ accrual.amount }}</td>
+                            <td>{{ accrual.comment|default:"—" }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p class="empty-state">Пока нет ни одной записи. Добавьте первую запись, чтобы сформировать отчет.</p>
+    {% endif %}
+</section>
+{% endblock %}

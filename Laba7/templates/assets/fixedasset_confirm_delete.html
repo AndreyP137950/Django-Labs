@@ -1,0 +1,45 @@
+<!-- Подтверждение удаления основного средства -->
+{% extends 'base.html' %}
+
+{% block title %}Удаление основного средства{% endblock %}
+
+{% block content %}
+<h2>Подтверждение удаления</h2>
+
+<div class="card" style="background-color: #ffe6e6; border-left: 4px solid #e74c3c;">
+    <p><strong style="color: #c0392b;">Внимание!</strong> Вы собираетесь удалить основное средство:</p>
+    
+    <table style="border: none; margin: 1rem 0;">
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Код внутреннего учета:</td>
+            <td style="border: none; padding: 0.5rem;"><strong>{{ object.internal_code }}</strong></td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Наименование:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Подразделение:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.department.name }}</td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Стоимость:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.cost | floatformat:2 }} руб.</td>
+        </tr>
+    </table>
+    
+    <p style="color: #c0392b; margin-top: 1rem;"><strong>Внимание:</strong> Удаление необратимо!</p>
+</div>
+
+<!-- Форма подтверждения удаления -->
+<form method="post">
+    {% csrf_token %}
+    
+    <div style="margin-top: 2rem;">
+        <button type="submit" class="button danger">Да, удалить основное средство</button>
+        <a href="{% url 'fixedasset_list' %}" class="button">Отмена, не удалять</a>
+    </div>
+</form>
+
+{% endblock %}
+

@@ -1,0 +1,28 @@
+<!-- Подтверждение удаления подразделения -->
+{% extends 'base.html' %}
+
+{% block title %}Удаление подразделения{% endblock %}
+
+{% block content %}
+<h2>Подтверждение удаления</h2>
+
+<div class="card" style="background-color: #ffe6e6; border-left: 4px solid #e74c3c;">
+    <p><strong style="color: #c0392b;">Внимание!</strong> Вы собираетесь удалить подразделение:</p>
+    <p style="font-size: 1.2rem; margin: 1rem 0;"><strong>{{ object.name }}</strong> (код: {{ object.code }})</p>
+    
+    <p style="color: #c0392b;"><strong>ВНИМАНИЕ:</strong> При удалении подразделения будут удалены ВСЕ основные средства, 
+    которые находятся в этом подразделении! Эта операция необратима!</p>
+</div>
+
+<!-- Форма подтверждения удаления -->
+<form method="post">
+    {% csrf_token %}
+    
+    <div style="margin-top: 2rem;">
+        <button type="submit" class="button danger">Да, удалить подразделение и все его ОС</button>
+        <a href="{% url 'department_list' %}" class="button">Отмена, не удалять</a>
+    </div>
+</form>
+
+{% endblock %}
+

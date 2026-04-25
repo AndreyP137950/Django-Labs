@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Лабораторная работа №6{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <!-- Общая оболочка сайта, которая переиспользуется всеми страницами. -->
+    <header class="site-header">
+        <div class="container header-grid">
+            <div>
+                <p class="eyebrow">Django · Лабораторная работа №6</p>
+                <h1>Журнал совместной разработки</h1>
+                <p class="lead">Минимальный учебный сайт для демонстрации структуры проекта, шаблонов и комментариев в коде.</p>
+            </div>
+            <nav class="top-nav" aria-label="Основная навигация">
+                <a href="{% url 'journal:dashboard' %}">Главная</a>
+                <a href="{% url 'journal:entry_add' %}">Добавить запись</a>
+                <a href="/admin/">Админка</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container main-area">
+        {% if messages %}
+            <section class="messages" aria-live="polite">
+                {% for message in messages %}
+                    <div class="message {{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            <p>Учебный проект Django с акцентом на структуру, документирование и понятный код.</p>
+        </div>
+    </footer>
+</body>
+</html>

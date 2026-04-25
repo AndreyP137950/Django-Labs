@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление записи | Лабораторная работа №6{% endblock %}
+
+{% block content %}
+    <!-- Подтверждение удаления защищает данные от случайного стирания. -->
+    <section class="panel form-panel">
+        <h2>Удалить запись</h2>
+        <p>Вы действительно хотите удалить запись «{{ object.title }}»?</p>
+        <form method="post" class="form-actions">
+            {% csrf_token %}
+            <button type="submit" class="danger">Да, удалить</button>
+            <a href="{% url 'journal:dashboard' %}">Отмена</a>
+        </form>
+    </section>
+{% endblock %}

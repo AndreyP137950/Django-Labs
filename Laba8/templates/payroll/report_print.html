@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Печатная форма · {{ page_title }}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script>
+        window.addEventListener('load', function () {
+            window.print();
+        });
+    </script>
+</head>
+<body class="print-body">
+    <!-- Отдельная страница для печати: минимум интерфейса и максимум таблицы. -->
+    <main class="print-page container">
+        <section class="panel print-header">
+            <h1>{{ page_title }}</h1>
+            <p>Нижний порог: {{ lower_limit }} · Верхний порог: {{ upper_limit }} · Число для кратности: {{ divisor }}</p>
+        </section>
+
+        <section class="panel">
+            <div class="table-wrap">
+                <table class="report-table print-table">
+                    <thead>
+                        <tr>
+                            <th>№ п/п</th>
+                            <th>Сотрудник</th>
+                            <th>Начислено</th>
+                            <th>Порог</th>
+                            <th>Кратность</th>
+                            <th>Дата</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in accrual_rows %}
+                            <tr class="row-{{ row.amount_state }}">
+                                <td>{{ row.position }}</td>
+                                <td>{{ row.accrual.employee }}</td>
+                                <td>{{ row.accrual.amount }}</td>
+                                <td><span class="status-badge {{ row.amount_state }}">{{ row.amount_label }}</span></td>
+                                <td><span class="status-badge {{ row.divisibility_state }}">{{ row.divisibility_label }}</span></td>
+                                <td>{{ row.accrual.accrual_date|date:"d.m.Y" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="6" class="empty-state">Нет данных для печати.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="2">Итого</td>
+                            <td>{{ total_amount|floatformat:2 }}</td>
+                            <td colspan="3">Количество строк: {{ accrual_rows|length }}</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

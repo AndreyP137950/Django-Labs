@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ entry.title }} | Лабораторная работа №6{% endblock %}
+
+{% block content %}
+    <!-- Детальная страница помогает показать данные одного объекта модели. -->
+    <article class="panel detail-panel">
+        <p class="entry-meta">Приоритет {{ entry.priority }} · {{ entry.created_at|date:"d.m.Y H:i" }}</p>
+        <h2>{{ entry.title }}</h2>
+        <p class="detail-content">{{ entry.content|linebreaksbr }}</p>
+        <p class="entry-meta">Последнее обновление: {{ entry.updated_at|date:"d.m.Y H:i" }}</p>
+        <div class="card-actions">
+            <a href="{% url 'journal:entry_edit' entry.slug %}">Редактировать</a>
+            <a href="{% url 'journal:entry_delete' entry.slug %}">Удалить</a>
+            <a href="{% url 'journal:dashboard' %}">Вернуться к списку</a>
+        </div>
+    </article>
+{% endblock %}

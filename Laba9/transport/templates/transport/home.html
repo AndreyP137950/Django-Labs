@@ -1,0 +1,28 @@
+{% extends 'transport/base.html' %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+<section class="card-grid">
+    <article class="card">
+        <h2>Водители</h2>
+        <p>{{ summary.drivers_count }}</p>
+    </article>
+    <article class="card">
+        <h2>Автомобили</h2>
+        <p>{{ summary.cars_count }}</p>
+    </article>
+    <article class="card">
+        <h2>Путевые листы</h2>
+        <p>{{ summary.trip_count }}</p>
+    </article>
+    <article class="card">
+        <h2>Общий пробег</h2>
+        <p>{{ summary.total_mileage }}</p>
+    </article>
+    <article class="card">
+        <h2>Общий расход топлива</h2>
+        <p>{{ summary.total_fuel }}</p>
+    </article>
+</section>
+{% endblock %}

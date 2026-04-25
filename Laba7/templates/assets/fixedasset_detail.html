@@ -1,0 +1,81 @@
+<!-- Детальная информация об основном средстве -->
+{% extends 'base.html' %}
+
+{% block title %}{{ object.name }} - Основное средство{% endblock %}
+
+{% block content %}
+<h2>{{ object.name }}</h2>
+
+<div class="card">
+    <h3>Информация об основном средстве</h3>
+    
+    <table style="border: none;">
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold; width: 200px;">Код внутреннего учета:</td>
+            <td style="border: none; padding: 0.5rem;"><strong>{{ object.internal_code }}</strong></td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Подразделение:</td>
+            <td style="border: none; padding: 0.5rem;"><a href="{% url 'department_detail' object.department.id %}">{{ object.department.code }} - {{ object.department.name }}</a></td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Наименование:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.name }}</td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Описание:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.description | default:"Нет описания" }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="card">
+    <h3>Финансовая информация</h3>
+    
+    <table style="border: none;">
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold; width: 200px;">Первоначальная стоимость:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.cost | floatformat:2 }} руб.</td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Процент износа:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.depreciation_percent }}%</td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Остаточная стоимость:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.residual_cost | floatformat:2 }} руб.</td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Дата покупки:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.purchase_date | date:"d.m.Y" }}</td>
+        </tr>
+    </table>
+</div>
+
+<div class="card">
+    <h3>Служебная информация</h3>
+    
+    <table style="border: none;">
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold; width: 200px;">Порядковый номер:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.sequence_number }}</td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Дата создания:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.created_at | date:"d.m.Y H:i" }}</td>
+        </tr>
+        <tr>
+            <td style="border: none; padding: 0.5rem; font-weight: bold;">Дата изменения:</td>
+            <td style="border: none; padding: 0.5rem;">{{ object.updated_at | date:"d.m.Y H:i" }}</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Кнопки действия -->
+<div>
+    <a href="{% url 'fixedasset_update' object.id %}" class="button">Редактировать</a>
+    <a href="{% url 'fixedasset_list' %}" class="button">Вернуться к списку</a>
+</div>
+
+{% endblock %}
+

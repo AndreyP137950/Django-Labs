@@ -1,0 +1,40 @@
+{
+    "structure": [
+        {
+            "code": "date",
+            "transmit": true
+        },
+        {
+            "code": "rate",
+            "transmit": true
+        },
+        {
+            "code": "exchange",
+            "transmit": true
+        },
+        {
+            "code": "source",
+            "transmit": false
+        }
+    ],
+    "data": [
+        {
+            "date": "11.04.2026",
+            "rate": "75.00",
+            "exchange": "MOEX",
+            "source": "CBR"
+        },
+        {
+            "date": "12.04.2026",
+            "rate": "76.00",
+            "exchange": "MOEX",
+            "source": "CBR"
+        },
+        {
+            "date": "13.04.2026",
+            "rate": "70.00",
+            "exchange": "MOEX",
+            "source": "CBR"
+        }
+    ]
+}

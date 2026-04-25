@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Удаление сотрудника{% endblock %}
+
+{% block content %}
+<div class="form-container" style="border-top: 3px solid var(--danger-color);">
+    <h2 class="page-title" style="margin-bottom: 1rem; color: var(--danger-color);">Подтверждение удаления</h2>
+    
+    <p style="margin-bottom: 2rem; line-height: 1.5;">
+        Вы уверены, что хотите удалить сотрудника <strong>{{ object.last_name }} {{ object.first_name }}</strong>? 
+        Это действие нельзя отменить.
+    </p>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-actions">
+            <a href="{% url 'employee_list' %}" class="btn btn-outline" style="margin-right: auto;">Отмена</a>
+            <button type="submit" class="btn btn-danger">Да, удалить</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

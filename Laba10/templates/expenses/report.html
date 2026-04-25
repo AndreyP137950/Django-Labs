@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}Издержки организации{% endblock %}
+
+{% block content %}
+<section class="panel">
+    <h2>Параметры отчета</h2>
+
+    <form method="get" class="filter-form">
+        <div class="field">
+            <label for="{{ form.start_date.id_for_label }}">{{ form.start_date.label }}</label>
+            {{ form.start_date }}
+        </div>
+
+        <div class="field">
+            <label for="{{ form.end_date.id_for_label }}">{{ form.end_date.label }}</label>
+            {{ form.end_date }}
+        </div>
+
+        <button type="submit">Сформировать отчет</button>
+
+        {% if form.non_field_errors %}
+            <div class="form-errors">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </form>
+</section>
+
+<section class="panel">
+    <h2>Результат</h2>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Статья издержек</th>
+                    <th>Сумма</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in report_rows %}
+                    <tr>
+                        <td>{{ row.category__name }}</td>
+                        <td>{{ row.total|floatformat:2 }}</td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="2" class="empty-row">За выбранный период данных нет.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td>Итого</td>
+                    <td>{{ total_amount|floatformat:2 }}</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</section>
+{% endblock %}

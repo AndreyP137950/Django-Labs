@@ -1,0 +1,168 @@
+:root {
+    --bg: #f4f5f7;
+    --panel: #ffffff;
+    --text: #1f2933;
+    --line: #d8dee6;
+    --primary: #2f6ea2;
+    --danger: #c53030;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+}
+
+.container {
+    width: min(1100px, 92vw);
+    margin: 0 auto;
+}
+
+.site-header {
+    background: var(--panel);
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 24px;
+}
+
+.site-header h1 {
+    margin: 0;
+    padding: 18px 0 10px;
+    font-size: 1.45rem;
+    font-weight: 600;
+}
+
+.main-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 14px;
+}
+
+.main-nav a {
+    color: var(--text);
+    text-decoration: none;
+    padding: 8px 10px;
+    border: 1px solid var(--line);
+    background: var(--panel);
+}
+
+.main-nav a:hover {
+    border-color: var(--primary);
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 14px;
+}
+
+.card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 14px;
+}
+
+.card h2 {
+    margin: 0 0 8px;
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.card p {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--panel);
+    border: 1px solid var(--line);
+}
+
+th,
+td {
+    border: 1px solid var(--line);
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+}
+
+th {
+    background: #eef2f6;
+    font-weight: 600;
+}
+
+.data-form {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 16px;
+    max-width: 600px;
+}
+
+.form-row {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+input,
+select,
+button {
+    padding: 8px;
+    border: 1px solid var(--line);
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+.errorlist {
+    margin: 4px 0 0;
+    color: var(--danger);
+}
+
+.chart-wrap {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 12px;
+    margin-bottom: 20px;
+}
+
+@media (max-width: 800px) {
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+        display: block;
+    }
+
+    thead {
+        display: none;
+    }
+
+    tr {
+        border-bottom: 1px solid var(--line);
+        margin-bottom: 8px;
+    }
+
+    td {
+        border: none;
+        border-bottom: 1px solid var(--line);
+    }
+}

@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Начисление · Отчет по начислению зарплаты{% endblock %}
+
+{% block content %}
+<section class="panel detail-panel">
+    <h2>Карточка начисления</h2>
+    <dl class="detail-list">
+        <div>
+            <dt>Сотрудник</dt>
+            <dd>{{ accrual.employee }}</dd>
+        </div>
+        <div>
+            <dt>Начислено</dt>
+            <dd>{{ accrual.amount }}</dd>
+        </div>
+        <div>
+            <dt>Дата</dt>
+            <dd>{{ accrual.accrual_date|date:"d.m.Y" }}</dd>
+        </div>
+        <div>
+            <dt>Комментарий</dt>
+            <dd>{{ accrual.comment|default:"—" }}</dd>
+        </div>
+    </dl>
+
+    <div class="card-actions">
+        <a class="button" href="{% url 'payroll:accrual_edit' accrual.pk %}">Редактировать</a>
+        <a class="button secondary" href="{% url 'payroll:accrual_delete' accrual.pk %}">Удалить</a>
+        <a class="button secondary" href="{% url 'payroll:report' %}">К отчету</a>
+    </div>
+</section>
+{% endblock %}

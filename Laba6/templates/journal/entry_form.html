@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ view.object|default_if_none:'Новая запись' }} | Лабораторная работа №6{% endblock %}
+
+{% block content %}
+    <!-- Одна и та же форма используется для создания и редактирования записи. -->
+    <section class="panel form-panel">
+        <h2>{% if view.object %}Редактирование записи{% else %}Новая запись{% endif %}</h2>
+        <form method="post" class="data-form">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                <div class="field-row">
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                        <small>{{ field.help_text }}</small>
+                    {% endif %}
+                    {{ field.errors }}
+                </div>
+            {% endfor %}
+            <div class="form-actions">
+                <button type="submit">Сохранить</button>
+                <a href="{% url 'journal:dashboard' %}">Назад</a>
+            </div>
+        </form>
+    </section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+  <p>
+    <a href="{% url 'clients_list' %}">
+      <button>Открыть базу клиентов</button>
+    </a>
+  
+    <a href="{% url 'clients_orders_report' %}">
+      <button>Открыть базу заказов</button>
+    </a>
+  
+    <a href="{% url 'products_list' %}">
+      <button>Открыть базу товаров</button>
+    </a>
+  
+    <a href="{% url 'order_create' %}">
+      <button>Создать новый заказ</button>
+    </a>
+  </p>
+{% endblock %}
+

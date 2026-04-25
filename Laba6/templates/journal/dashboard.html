@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная | Лабораторная работа №6{% endblock %}
+
+{% block content %}
+    <!-- Сводный блок показывает, как шаблон получает данные из представления. -->
+    <section class="panel intro-panel">
+        <div>
+            <h2>Список записей</h2>
+            <p>Всего записей: {{ entry_count }}</p>
+        </div>
+        <a class="button" href="{% url 'journal:entry_add' %}">Создать запись</a>
+    </section>
+
+    <section class="panel stats-panel">
+        <h3>Статистика по приоритетам</h3>
+        <ul class="stats-list">
+            {% for item in priority_stats %}
+                <li>Приоритет {{ item.priority }}: {{ item.total }}</li>
+            {% empty %}
+                <li>Пока нет данных для статистики.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="entries-grid">
+        {% for entry in entries %}
+            <article class="entry-card">
+                <p class="entry-meta">Приоритет {{ entry.priority }} · {{ entry.created_at|date:"d.m.Y H:i" }}</p>
+                <h3><a href="{% url 'journal:entry_detail' entry.slug %}">{{ entry.title }}</a></h3>
+                <p>{{ entry.content|truncatewords:18 }}</p>
+                <div class="card-actions">
+                    <a href="{% url 'journal:entry_edit' entry.slug %}">Редактировать</a>
+                    <a href="{% url 'journal:entry_delete' entry.slug %}">Удалить</a>
+                </div>
+            </article>
+        {% empty %}
+            <article class="panel empty-state">
+                <h3>Записей пока нет</h3>
+                <p>Создайте первую запись, чтобы увидеть, как работает CRUD-логика Django.</p>
+            </article>
+        {% endfor %}
+    </section>
+{% endblock %}

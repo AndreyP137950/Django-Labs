@@ -1,0 +1,86 @@
+<!-- Главная страница приложения -->
+{% extends 'base.html' %}
+
+{% block title %}Управление основными средствами - Главная{% endblock %}
+
+{% block content %}
+<h2>Система управления основными средствами организации</h2>
+
+<!--<p>Добро пожаловать в систему учета и управления основными средствами компании. 
+Здесь вы можете хранить и управлять информацией об основных средствах (оборудование, мебель, транспортные средства и т.д.) 
+и подразделениях организации.</p>-->
+
+<!-- Статистика -->
+<div class="stats">
+    <div class="stat-card">
+        <div class="label">Всего основных средств</div>
+        <div class="value">{{ total_assets }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="label">Подразделений в организации</div>
+        <div class="value">{{ total_departments }}</div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="label">Общая стоимость ОС</div>
+        <div class="value">{{ total_cost | floatformat:0 }} руб.</div>
+    </div>
+</div>
+
+<!-- Быстрые ссылки на основные действия -->
+<div class="card">
+    <h3>Быстрые ссылки</h3>
+    <a href="{% url 'fixedasset_create' %}" class="button success">+ Добавить основное средство</a>
+    <a href="{% url 'department_create' %}" class="button success">+ Добавить подразделение</a>
+    <a href="{% url 'fixedasset_list' %}" class="button">Просмотреть все ОС</a>
+    <a href="{% url 'department_list' %}" class="button">Просмотреть подразделения</a>
+</div>
+
+<!-- Последние добавленные ОС -->
+{% if recent_assets %}
+    <div class="card">
+        <h3>Последние добавленные основные средства</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Код внутреннего учета</th>
+                    <th>Наименование</th>
+                    <th>Подразделение</th>
+                    <th>Стоимость</th>
+                    <th>Дата добавления</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for asset in recent_assets %}
+                    <tr>
+                        <td><strong>{{ asset.internal_code }}</strong></td>
+                        <td><a href="{% url 'fixedasset_detail' asset.id %}">{{ asset.name }}</a></td>
+                        <td><a href="{% url 'department_detail' asset.department.id %}">{{ asset.department.name }}</a></td>
+                        <td>{{ asset.cost | floatformat:2 }} руб.</td>
+                        <td>{{ asset.created_at | date:"d.m.Y" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+<!-- Информация о системе 
+<div class="card">
+    <h3>О системе</h3>
+    <p>Тема: Создание ИС на основе типовых решений. Изменение информационных объектов и баз данных</p>
+    <p>Вариант 1: Реорганизация учета основных средств</p>
+    
+    <p><strong>Основные возможности:</strong></p>
+    <ul style="margin-left: 1rem;">
+        <li>Добавление и управление информацией об основных средствах</li>
+        <li>Автоматическое генерирование кода внутреннего учета (КодПодразд_ПорядковыйНомер)</li>
+        <li>Отслеживание подразделений организации и мест хранения ОС</li>
+        <li>Расчет и отслеживание износа основных средств</li>
+        <li>Поиск и фильтрация по кодам и наименованиям</li>
+    </ul>
+</div>-->
+
+{% endblock %}
+

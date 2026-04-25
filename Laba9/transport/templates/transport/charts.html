@@ -1,0 +1,79 @@
+{% extends 'transport/base.html' %}
+
+{% block title %}Диаграммы{% endblock %}
+
+{% block content %}
+<h2>Диаграмма пробега по водителям</h2>
+<div class="chart-wrap">
+    <canvas id="driversChart"></canvas>
+</div>
+
+<h2>Диаграмма расхода топлива по автомобилям</h2>
+<div class="chart-wrap">
+    <canvas id="carsChart"></canvas>
+</div>
+
+{{ driver_labels|json_script:'driverLabelsData' }}
+{{ driver_values|json_script:'driverValuesData' }}
+{{ avg_driver_mileage|json_script:'avgDriverMileageData' }}
+{{ car_labels|json_script:'carLabelsData' }}
+{{ car_values|json_script:'carValuesData' }}
+{{ avg_car_fuel|json_script:'avgCarFuelData' }}
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Диаграмма по водителям: синие столбики и красная средняя линия.
+    const driverLabels = JSON.parse(document.getElementById('driverLabelsData').textContent);
+    const driverValues = JSON.parse(document.getElementById('driverValuesData').textContent);
+    const avgDriverMileage = JSON.parse(document.getElementById('avgDriverMileageData').textContent);
+
+    new Chart(document.getElementById('driversChart'), {
+        type: 'bar',
+        data: {
+            labels: driverLabels,
+            datasets: [
+                {
+                    label: 'Пробег',
+                    data: driverValues,
+                    backgroundColor: '#2f6ea2'
+                },
+                {
+                    label: 'Средний пробег',
+                    data: driverLabels.map(() => avgDriverMileage),
+                    type: 'line',
+                    borderColor: '#c53030',
+                    borderWidth: 2,
+                    pointRadius: 0
+                }
+            ]
+        }
+    });
+
+    // Диаграмма по автомобилям: синие столбики и красная средняя линия.
+    const carLabels = JSON.parse(document.getElementById('carLabelsData').textContent);
+    const carValues = JSON.parse(document.getElementById('carValuesData').textContent);
+    const avgCarFuel = JSON.parse(document.getElementById('avgCarFuelData').textContent);
+
+    new Chart(document.getElementById('carsChart'), {
+        type: 'bar',
+        data: {
+            labels: carLabels,
+            datasets: [
+                {
+                    label: 'Расход топлива',
+                    data: carValues,
+                    backgroundColor: '#2f6ea2'
+                },
+                {
+                    label: 'Средний расход топлива',
+                    data: carLabels.map(() => avgCarFuel),
+                    type: 'line',
+                    borderColor: '#c53030',
+                    borderWidth: 2,
+                    pointRadius: 0
+                }
+            ]
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'transport/base.html' %}
+
+{% block title %}Автомобили{% endblock %}
+
+{% block content %}
+<h2>Справочник автомобилей</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Марка</th>
+            <th>Гос. номер</th>
+            <th>Год выпуска</th>
+            <th>Норма расхода (л/км)</th>
+            <th>Суммарный расход топлива</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for car in cars %}
+        <tr>
+            <td>{{ car.brand }}</td>
+            <td>{{ car.plate_number }}</td>
+            <td>{{ car.production_year }}</td>
+            <td>{{ car.fuel_rate_per_km }}</td>
+            <td>{{ car.total_fuel }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
